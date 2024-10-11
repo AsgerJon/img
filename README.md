@@ -1,2 +1,2 @@
-# img
-zshpy script for image editing from the command line
+# img_scale
+Custom script for use with .zshpy

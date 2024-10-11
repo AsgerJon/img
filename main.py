@@ -9,7 +9,7 @@ import sys
 from worktoy.meta import CallMeMaybe
 from worktoy.text import typeMsg, stringList
 
-from img import ImgTool
+from img import ImgTool, OPScale
 from moreworktoy import parseNum
 from yolo import yolo
 
@@ -45,12 +45,29 @@ def tester02() -> int:
 
 def func(*args) -> int:
   """The default function"""
-  print(sys.argv[1], 'func')
+  tool = ImgTool()
+  tool.load(str(args[0]))
+  tool.sourceImage.show()
   return 0
 
 
 def scale(*args) -> int:
   """Resizes the image"""
+  try:
+    OPScale(*args)
+    return 0
+  except Exception as e:
+    print("""The requested rescaling operation encountered:""")
+    print("""%s: %s!""" % (type(e).__name__, str(e)))
+    return 1
+
+
+def resolveFunction(key: str) -> CallMeMaybe:
+  """Resolves the function to be called"""
+  _funcs = dict(func=func, scale=scale)
+  out = _funcs.get(key, None)
+  if isinstance(out, CallMeMaybe):
+    return out
 
 
 def main() -> int:
@@ -68,11 +85,18 @@ def main() -> int:
     print(self, funcKey, sysFile)
     return 2
   key = 'func' if '.' not in funcKey else funcKey.split('.')[1]
-  target = globals().get(key, None)
+  target = resolveFunction(key)
   if not isinstance(target, CallMeMaybe):
     print(typeMsg('target', target, CallMeMaybe))
     return 3
-  return target(*args, hostDir)
+  posArgs = []
+  parsed = parseNum(*args)
+  for arg in parsed:
+    if isinstance(arg, str):
+      posArgs.append(str(os.path.join(hostDir, arg)))
+    else:
+      posArgs.append(arg)
+  return target(*posArgs)
 
 
 if __name__ == '__main__':

@@ -4,3 +4,4 @@
 from __future__ import annotations
 
 from ._img_tool import ImgTool
+from ._op_scale import OPScale

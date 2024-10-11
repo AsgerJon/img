@@ -56,9 +56,9 @@ class ImgTool(BaseObject):
   def resize(self, width: int, height: int, ) -> None:
     """Resize the image."""
     if width < 0:
-      return self.resize(height * self.aspect, height, )
+      return self.resize(int(height * self.aspect), height, )
     if height < 0:
-      return self.resize(width, width / self.aspect, )
+      return self.resize(width, int(width / self.aspect), )
     self.tempImage = Image.resize(self.sourceImage, (width, height))
     if not self.targetFile:
       self.targetFile = self._generateResizedName()

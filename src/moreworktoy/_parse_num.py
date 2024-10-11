@@ -20,6 +20,12 @@ def parseNum(*args) -> list:
             try:
               out.append(complex(arg))
             except ValueError as complexError:
-              if 'malformed string' in str(complexError):
+              if 'string' in str(complexError):
                 out.append(arg)
+              else:
+                raise complexError
+          else:
+            raise floatError
+      else:
+        raise intError
   return out
